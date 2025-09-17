@@ -152,107 +152,91 @@ const WorkoutTracker = () => {
     }));
   };
 
-  const ExerciseCard = ({ exercise }) => {
-    const history = getExerciseHistory(exercise.id);
-    const currentData = currentSession[exercise.id] || { weight: '', reps: '', notes: '' };
-    
-    return (
-      <div className="bg-white rounded-lg shadow-md p-4 mb-4">
-        <div className="flex justify-between items-start mb-3">
-          <div>
-            <h3 className="font-semibold text-lg">{exercise.name}</h3>
-            <p className="text-sm text-gray-600">{exercise.sets} sets × {exercise.reps} reps</p>
-            {exercise.rest !== 'circuit' && <p className="text-xs text-gray-500">Rest: {exercise.rest}</p>}
-          </div>
+const ExerciseCard = ({ exercise }) => {
+  const history = getExerciseHistory(exercise.id);
+  const currentData = currentSession[exercise.id] || { weight: '', reps: '', notes: '' };
+  
+  return (
+    <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+      <div className="flex justify-between items-start mb-3">
+        <div>
+          <h3 className="font-semibold text-lg">{exercise.name}</h3>
+          <p className="text-sm text-gray-600">{exercise.sets} sets × {exercise.reps} reps</p>
+          {exercise.rest !== 'circuit' && <p className="text-xs text-gray-500">Rest: {exercise.rest}</p>}
         </div>
+      </div>
 
-        {/* Previous History */}
-        {history.length > 0 && (
-          <div className="bg-gray-50 rounded p-3 mb-3">
-            <h4 className="text-sm font-medium text-gray-700 mb-2">Previous Sessions:</h4>
-            {history.map((entry, index) => (
-              <div key={index} className="text-sm text-gray-600 flex justify-between">
-                <span>{entry.date}</span>
-                <span>{entry.weight}lbs × {entry.reps} reps</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Current Session Input */}
-<div className="grid grid-cols-2 gap-3 mb-3">
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">Weight (lbs)</label>
-    <input
-      key={`weight-${exercise.id}`}
-      type="number"
-      value={currentData.weight}
-      onChange={(e) => setCurrentSession(prev => ({
-        ...prev,
-        [exercise.id]: { ...currentData, weight: e.target.value }
-      }))}
-      className="w-full p-2 border border-gray-300 rounded-md"
-      placeholder="0"
-    />
-  </div>
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">Reps</label>
-    <input
-      key={`reps-${exercise.id}`}
-      type="number"
-      value={currentData.reps}
-      onChange={(e) => setCurrentSession(prev => ({
-        ...prev,
-        [exercise.id]: { ...currentData, reps: e.target.value }
-      }))}
-      className="w-full p-2 border border-gray-300 rounded-md"
-      placeholder="0"
-    />
-  </div>
-</div>
-
-<div className="mb-3">
-  <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
-  <input
-    key={`notes-${exercise.id}`}
-    type="text"
-    value={currentData.notes}
-    onChange={(e) => setCurrentSession(prev => ({
-      ...prev,
-      [exercise.id]: { ...currentData, notes: e.target.value }
-    }))}
-    className="w-full p-2 border border-gray-300 rounded-md"
-    placeholder="Feel good, form was solid, etc."
-  />
-</div>
-          </div>
+      {/* Previous History */}
+      {history.length > 0 && (
+        <div className="bg-gray-50 rounded p-3 mb-3">
+          <h4 className="text-sm font-medium text-gray-700 mb-2">Previous Sessions:</h4>
+          {history.map((entry, index) => (
+            <div key={index} className="text-sm text-gray-600 flex justify-between">
+              <span>{entry.date}</span>
+              <span>{entry.weight}lbs × {entry.reps} reps</span>
+            </div>
+          ))}
         </div>
+      )}
 
-        <div className="mb-3">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+      {/* Current Session Input */}
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Weight (lbs)</label>
           <input
-            type="text"
-            value={currentData.notes}
+            key={`weight-${exercise.id}`}
+            type="number"
+            value={currentData.weight}
             onChange={(e) => setCurrentSession(prev => ({
               ...prev,
-              [exercise.id]: { ...currentData, notes: e.target.value }
+              [exercise.id]: { ...currentData, weight: e.target.value }
             }))}
             className="w-full p-2 border border-gray-300 rounded-md"
-            placeholder="Feel good, form was solid, etc."
+            placeholder="0"
           />
         </div>
-
-        <button
-          onClick={() => saveExerciseData(exercise.id, currentData.weight, currentData.reps, currentData.notes)}
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 flex items-center justify-center"
-          disabled={!currentData.weight || !currentData.reps}
-        >
-          <CheckCircle />
-          <span className="ml-2">Save Set</span>
-        </button>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Reps</label>
+          <input
+            key={`reps-${exercise.id}`}
+            type="number"
+            value={currentData.reps}
+            onChange={(e) => setCurrentSession(prev => ({
+              ...prev,
+              [exercise.id]: { ...currentData, reps: e.target.value }
+            }))}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="0"
+          />
+        </div>
       </div>
-    );
-  };
+
+      <div className="mb-3">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+        <input
+          key={`notes-${exercise.id}`}
+          type="text"
+          value={currentData.notes}
+          onChange={(e) => setCurrentSession(prev => ({
+            ...prev,
+            [exercise.id]: { ...currentData, notes: e.target.value }
+          }))}
+          className="w-full p-2 border border-gray-300 rounded-md"
+          placeholder="Feel good, form was solid, etc."
+        />
+      </div>
+
+      <button
+        onClick={() => saveExerciseData(exercise.id, currentData.weight, currentData.reps, currentData.notes)}
+        className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 flex items-center justify-center"
+        disabled={!currentData.weight || !currentData.reps}
+      >
+        <CheckCircle />
+        <span className="ml-2">Save Set</span>
+      </button>
+    </div>
+  );
+};
 
   const ProgressChart = () => {
     const [selectedExercise, setSelectedExercise] = useState('');
@@ -422,4 +406,5 @@ ReactDOM.render(<WorkoutTracker />, document.getElementById('root'));
     </script>
 </body>
 </html>
+
 
