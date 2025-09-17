@@ -156,6 +156,26 @@ const ExerciseCard = ({ exercise }) => {
   const history = getExerciseHistory(exercise.id);
   const currentData = currentSession[exercise.id] || { weight: '', reps: '', notes: '' };
   
+  // Local state for inputs to prevent re-render on every keystroke
+  const [localWeight, setLocalWeight] = useState(currentData.weight);
+  const [localReps, setLocalReps] = useState(currentData.reps);
+  const [localNotes, setLocalNotes] = useState(currentData.notes);
+
+  // Update local state when currentData changes (from saved data)
+  useEffect(() => {
+    setLocalWeight(currentData.weight);
+    setLocalReps(currentData.reps);
+    setLocalNotes(currentData.notes);
+  }, [currentData.weight, currentData.reps, currentData.notes]);
+
+  // Update main state when user finishes editing
+  const updateMainState = () => {
+    setCurrentSession(prev => ({
+      ...prev,
+      [exercise.id]: { weight: localWeight, reps: localReps, notes: localNotes }
+    }));
+  };
+  
   return (
     <div className="bg-white rounded-lg shadow-md p-4 mb-4">
       <div className="flex justify-between items-start mb-3">
@@ -184,13 +204,10 @@ const ExerciseCard = ({ exercise }) => {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Weight (lbs)</label>
           <input
-            key={`weight-${exercise.id}`}
             type="number"
-            value={currentData.weight}
-            onChange={(e) => setCurrentSession(prev => ({
-              ...prev,
-              [exercise.id]: { ...currentData, weight: e.target.value }
-            }))}
+            value={localWeight}
+            onChange={(e) => setLocalWeight(e.target.value)}
+            onBlur={updateMainState}
             className="w-full p-2 border border-gray-300 rounded-md"
             placeholder="0"
           />
@@ -198,13 +215,10 @@ const ExerciseCard = ({ exercise }) => {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Reps</label>
           <input
-            key={`reps-${exercise.id}`}
             type="number"
-            value={currentData.reps}
-            onChange={(e) => setCurrentSession(prev => ({
-              ...prev,
-              [exercise.id]: { ...currentData, reps: e.target.value }
-            }))}
+            value={localReps}
+            onChange={(e) => setLocalReps(e.target.value)}
+            onBlur={updateMainState}
             className="w-full p-2 border border-gray-300 rounded-md"
             placeholder="0"
           />
@@ -214,22 +228,22 @@ const ExerciseCard = ({ exercise }) => {
       <div className="mb-3">
         <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
         <input
-          key={`notes-${exercise.id}`}
           type="text"
-          value={currentData.notes}
-          onChange={(e) => setCurrentSession(prev => ({
-            ...prev,
-            [exercise.id]: { ...currentData, notes: e.target.value }
-          }))}
+          value={localNotes}
+          onChange={(e) => setLocalNotes(e.target.value)}
+          onBlur={updateMainState}
           className="w-full p-2 border border-gray-300 rounded-md"
           placeholder="Feel good, form was solid, etc."
         />
       </div>
 
       <button
-        onClick={() => saveExerciseData(exercise.id, currentData.weight, currentData.reps, currentData.notes)}
+        onClick={() => {
+          updateMainState();
+          saveExerciseData(exercise.id, localWeight, localReps, localNotes);
+        }}
         className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 flex items-center justify-center"
-        disabled={!currentData.weight || !currentData.reps}
+        disabled={!localWeight || !localReps}
       >
         <CheckCircle />
         <span className="ml-2">Save Set</span>
@@ -406,5 +420,6 @@ ReactDOM.render(<WorkoutTracker />, document.getElementById('root'));
     </script>
 </body>
 </html>
+
 
 
